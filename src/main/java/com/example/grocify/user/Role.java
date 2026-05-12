@@ -3,6 +3,8 @@
 package com.example.grocify.user;
 
 public enum Role {
-    USER,
-    ADMIN
+    CUSTOMER,
+    ADMIN,
+    DELIVERY_PARTNER,
+    WAREHOUSE_MANAGER
 }

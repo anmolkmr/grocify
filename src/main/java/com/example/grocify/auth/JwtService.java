@@ -2,6 +2,7 @@
 
 package com.example.grocify.auth;
 
+import com.example.grocify.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,15 +20,27 @@ public class JwtService {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String email) {
+    public String generateToken(User user) {
 
         return Jwts.builder()
-                .setSubject(email)
+
+                .claim("userId", user.getId())
+
+                .claim("role", user.getRole().name())
+
+                .setSubject(user.getEmail())
+
                 .setIssuedAt(new Date())
+
                 .setExpiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60)
+                        new Date(
+                                System.currentTimeMillis()
+                                        + 1000 * 60 * 60
+                        )
                 )
+
                 .signWith(key, SignatureAlgorithm.HS256)
+
                 .compact();
     }
 
@@ -40,6 +53,39 @@ public class JwtService {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    public String extractRole(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+
+                .setSigningKey(key)
+
+                .build()
+
+                .parseClaimsJws(token)
+
+                .getBody();
+
+        return claims.get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+
+                .setSigningKey(key)
+
+                .build()
+
+                .parseClaimsJws(token)
+
+                .getBody();
+
+        Integer userId =
+                claims.get("userId", Integer.class);
+
+        return userId.longValue();
     }
 
     public boolean isTokenValid(String token) {

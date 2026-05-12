@@ -4,6 +4,7 @@ package com.example.grocify.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.
         AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.
@@ -45,17 +46,64 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**"
-                        ).permitAll()
 
-                        .anyRequest()
-                        .authenticated()
-                )
+                // PUBLIC APIs
 
+                .requestMatchers(
+                        HttpMethod.GET,
+                        "/products/**",
+                        "/categories/**",
+                        "/subcategories/**",
+                        "/brands/**",
+                        "/variants/**"
+                ).permitAll()
+
+                // AUTH APIs
+
+                .requestMatchers(
+                        "/auth/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**"
+                ).permitAll()
+
+                // ADMIN APIs
+
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/products/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        "/products/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                        HttpMethod.DELETE,
+                        "/products/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/categories/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/brands/**"
+                ).hasRole("ADMIN")
+
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/variants/**"
+                ).hasRole("ADMIN")
+
+                // EVERYTHING ELSE
+
+                .anyRequest()
+                .authenticated()
+        )
                 .addFilterBefore(
                         jwtFilter,
                         UsernamePasswordAuthenticationFilter.class

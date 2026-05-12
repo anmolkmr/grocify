@@ -6,12 +6,14 @@ import com.example.grocify.auth.dto.AuthResponse;
 import com.example.grocify.auth.dto.LoginRequest;
 import com.example.grocify.auth.dto.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@SecurityRequirements
 @Tag(name = "Authentication APIs")
 public class AuthController {
 

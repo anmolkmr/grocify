@@ -50,11 +50,18 @@ public class JwtFilter extends OncePerRequestFilter {
             String email =
                     jwtService.extractEmail(token);
 
+            String role =
+                    jwtService.extractRole(token);
+
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             email,
                             null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                            List.of(
+                                    new SimpleGrantedAuthority(
+                                            "ROLE_" + role
+                                    )
+                            )
                     );
 
             SecurityContextHolder.getContext()
